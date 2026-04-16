@@ -8,12 +8,16 @@ import { Link, NavLink } from 'react-router-dom'
 import {
   SignedIn,
   SignedOut,
-  SignInButton,
+  SignInButton, 
   UserButton
 } from '@clerk/clerk-react'
 
-const Navbar = () => {
-  const location = false
+const Navbar = ({ location, getLocation, opendropdown, setopendropdown }) => {
+
+  // ✅ FIXED toggle function
+  const toggeldropdown = () => {
+    setopendropdown(!opendropdown)
+  }
 
   return (
     <div className='bg-white py-3 shadow-2xl'>
@@ -29,12 +33,41 @@ const Navbar = () => {
             </h1>
           </Link>
 
-          <div className='flex gap-1 cursor-pointer text-gray-700 items-center'>
+          {/* ✅ LOCATION CLICKABLE */}
+          <div 
+            onClick={toggeldropdown}
+            className='flex gap-1 cursor-pointer text-gray-700 items-center relative'
+          >
             <MapPin className='text-red-500' />
+            
             <span className='font-semibold'>
-              {location ? "Your Location" : "Add Address"}
+              {location}
             </span>
+
             <FaCaretDown />
+
+            {/* ✅ DROPDOWN */}
+            {opendropdown && (
+              <div className='absolute top-10 left-0 bg-white shadow-lg rounded p-4 w-64 z-50'>
+                
+                <h2 className='font-semibold mb-2'>Select Location</h2>
+
+                <button
+                  onClick={getLocation}
+                  className='w-full bg-blue-500 text-white py-1 rounded mb-2'
+                >
+                </button>
+
+                <button
+                  onClick={() => setopendropdown(false)}
+                  className='w-full bg-gray-300 py-1 rounded'
+                >
+                  Cancel
+                </button>
+
+              </div>
+            )}
+
           </div>
 
         </div>
@@ -89,7 +122,6 @@ const Navbar = () => {
           {/* ✅ AUTH SECTION */}
           <div className='flex items-center gap-3'>
 
-            {/* Logged OUT */}
             <SignedOut>
               <SignInButton mode="modal">
                 <button className='bg-red-500 text-white px-4 py-1.5 rounded-lg hover:bg-red-600 transition'>
@@ -98,7 +130,6 @@ const Navbar = () => {
               </SignInButton>
             </SignedOut>
 
-            {/* Logged IN */}
             <SignedIn>
               <UserButton afterSignOutUrl="/" />
             </SignedIn>
